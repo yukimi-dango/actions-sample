@@ -29,9 +29,13 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: "^1.20"
+      - run: ls -la
+      - run: mkdir -p ./tmp/my_bucket
+      - run: ls -la
       - uses: fsouza/fake-gcs-action@v0.4.1
         with:
           version: "1.37.2"
+          data: tmp/my_bucket
           backend: memory
           scheme: http
       - run: go version
