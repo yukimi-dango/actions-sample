@@ -14,7 +14,12 @@ import (
 func TestUpload(t *testing.T) {
 	ctx := context.Background()
 
-	os.Setenv("STORAGE_EMULATOR_HOST", "http://localhost:4443")
+	baseURL := os.Getenv("GCS_URL")
+	if baseURL == "" {
+		t.Fatal("no gcs url")
+	}
+
+	os.Setenv("STORAGE_EMULATOR_HOST", baseURL)
 
 	img := image.NewRGBA(image.Rect(0, 0, 256, 256))
 	buf := new(bytes.Buffer)

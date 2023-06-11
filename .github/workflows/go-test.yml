@@ -38,3 +38,5 @@ jobs:
       - run: go mod download
       - run: curl http://localhost:${{ job.services.gcs-mock.ports[4443] }}/storage/v1/b
       - run: make test
+        env:
+          GCS_URL: http://localhost:${{ job.services.gcs-mock.ports[4443] }}
