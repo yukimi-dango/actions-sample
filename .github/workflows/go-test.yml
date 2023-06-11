@@ -1,0 +1,29 @@
+name: Go Test
+
+run-name: ${{ github.actor }} is testing go test 🚀
+
+env:
+  MY_BUCKET: my_bucket
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches: [main]
+
+jobs:
+  put-gcs-facker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "^1.20"
+      - uses: fsouza/fake-gcs-action@v0.4.1
+        with:
+          scheme: http
+          data: ${{ env.MY_BUCKET }}
+      - run: go version
+      - run: go mod donwload
+      - run: curl http://localhost:4443/storage/v1/b
+      - run: make test
