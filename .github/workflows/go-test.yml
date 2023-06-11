@@ -33,7 +33,7 @@ jobs:
         with:
           version: "1.37.2"
           backend: memory
-          data: testdata
+          data: ${{ github.workspace }}/tmp
           scheme: http
       - run: go version
       - run: go mod download
