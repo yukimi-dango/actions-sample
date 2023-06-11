@@ -22,7 +22,7 @@ jobs:
       - uses: fsouza/fake-gcs-action@v0.4.1
         with:
           scheme: http
-          data: ${{ env.MY_BUCKET }}
+          data: my_bucket
       - run: go version
       - run: go mod download
       - run: curl http://localhost:4443/storage/v1/b
