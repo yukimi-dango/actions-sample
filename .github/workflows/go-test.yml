@@ -17,12 +17,12 @@ jobs:
     services:
       gcs-mock:
         image: fsouza/fake-gcs-server:1.45.2
-        ports:
-          - 4443
-        #volumes:
-        #  #- ./tmp/gcs-data:/data/${{ env.MY_BUCKET }}
-        #  - ./tmp/gcs-data:/data/my_bucket
-        options: "-scheme http"
+        #ports:
+        #  - 4443
+        ##volumes:
+        ##  #- ./tmp/gcs-data:/data/${{ env.MY_BUCKET }}
+        ##  - ./tmp/gcs-data:/data/my_bucket
+        #options: "-scheme http"
 
     steps:
       - uses: actions/checkout@v3
