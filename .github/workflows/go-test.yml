@@ -15,12 +15,6 @@ on:
 jobs:
   put-gcs-facker:
     runs-on: ubuntu-latest
-    services:
-      gcs-mock:
-        image: fsouza/fake-gcs-server:1.45.2
-        ports:
-          - ${{ env.GCS_MOCK_PORT }}
-
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
