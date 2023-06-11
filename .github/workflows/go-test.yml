@@ -4,6 +4,7 @@ run-name: ${{ github.actor }} is testing go test 🚀
 
 env:
   MY_BUCKET: my_bucket
+  GCS_MOCK_PORT: 4445
 
 on:
   pull_request:
@@ -18,17 +19,15 @@ jobs:
       gcs-mock:
         image: fsouza/fake-gcs-server:1.45.2
         ports:
-          - 4443
-        ##volumes:
-        #  - ./tmp/gcs-data:/data/${{ env.MY_BUCKET }}
-        #  - ./tmp/gcs-data:/data/my_bucket
-        #  - ${{ github.workspace }}/tmp/gcs-data:/data/${{ env.MY_BUCKET }}
+          - ${{ env.GCS_MOCK_PORT }}
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version: "^1.20"
+
+      # gcs-mock-server setup
       - run: mkdir -p ./tmp/my_bucket
       - uses: fsouza/fake-gcs-action@v0.4.1
         with:
@@ -36,11 +35,11 @@ jobs:
           data: tmp
           backend: memory
           scheme: http
-          public-host: localhost:4443
-      - run: curl http://localhost:4443/storage/v1/b
+          public-host: localhost:${{ env.GCS_MOCK_PORT }}
+          port: ${{ evn.GCS_MOCK_PORT }}
+      - run: curl http://localhost:${{ env.GCS_MOCK_PORT }}/storage/v1/b
       - run: go version
       - run: go mod download
       - run: make test
         env:
-          #GCS_URL: http://localhost:${{ job.services.gcs-mock.ports[4443] }}
-          GCS_URL: http://localhost:4443
+          GCS_URL: http://localhost:${{ env.GCS_MOCK_PORT }}
