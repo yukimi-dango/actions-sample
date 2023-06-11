@@ -19,11 +19,9 @@ jobs:
         image: fsouza/fake-gcs-server:1.45.2
         ports:
           - 4443
-        options: --scheme=http
         ##volumes:
-        ##  #- ./tmp/gcs-data:/data/${{ env.MY_BUCKET }}
-        ##  - ./tmp/gcs-data:/data/my_bucket
-        #volumes:
+        #  - ./tmp/gcs-data:/data/${{ env.MY_BUCKET }}
+        #  - ./tmp/gcs-data:/data/my_bucket
         #  - ${{ github.workspace }}/tmp/gcs-data:/data/${{ env.MY_BUCKET }}
 
     steps:
@@ -31,14 +29,15 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: "^1.20"
-      #- uses: fsouza/fake-gcs-server@v1.45.2
-      #  with:
-      #    port: 4443
-      #    scheme: http
-      #    data: my_bucket
+      - uses: fsouza/fake-gcs-action@v0.4.1
+        with:
+          version: "1.37.2"
+          backend: memory
+          data: my_bucket
+          scheme: http
       - run: go version
       - run: go mod download
-      - run: curl http://localhost:${{ job.services.gcs-mock.ports[4443] }}/storage/v1/b
       - run: make test
         env:
-          GCS_URL: http://localhost:${{ job.services.gcs-mock.ports[4443] }}
+          #GCS_URL: http://localhost:${{ job.services.gcs-mock.ports[4443] }}
+          GCS_URL: http://localhost:443
