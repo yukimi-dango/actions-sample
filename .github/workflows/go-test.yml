@@ -30,7 +30,7 @@ jobs:
           backend: memory
           scheme: http
           public-host: localhost:${{ env.GCS_MOCK_PORT }}
-          port: ${{ evn.GCS_MOCK_PORT }}
+          port: ${{ env.GCS_MOCK_PORT }}
       - run: curl http://localhost:${{ env.GCS_MOCK_PORT }}/storage/v1/b
       - run: go version
       - run: go mod download
