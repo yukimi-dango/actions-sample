@@ -24,6 +24,6 @@ jobs:
           scheme: http
           data: ${{ env.MY_BUCKET }}
       - run: go version
-      - run: go mod donwload
+      - run: go mod download
       - run: curl http://localhost:4443/storage/v1/b
       - run: make test
