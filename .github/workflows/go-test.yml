@@ -21,7 +21,8 @@ jobs:
         image: fsouza/fake-gcs-server
         ports:
           - 4443
-        options: --entrypoint='"/bin/fake-gcs-server", "-data", "/data", "-scheme", "http"'
+        #options: --entrypoint='"/bin/fake-gcs-server", "-data", "/data", "-scheme", "http"'
+        options: --entrypoint="\"/bin/fake-gcs-server\", \"-data\", \"/data\", \"-scheme\", \"http\""
         #command: -public-host "localhost:4443"
 
     steps:
