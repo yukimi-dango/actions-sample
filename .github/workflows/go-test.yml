@@ -18,7 +18,7 @@ jobs:
       gcs-mock:
         image: fsouza/fake-gcs-server:1.45.2
         ports:
-          - 4443:4443
+          - 4443
         options: "-scheme http"
         ##volumes:
         ##  #- ./tmp/gcs-data:/data/${{ env.MY_BUCKET }}
@@ -36,5 +36,5 @@ jobs:
       #    data: my_bucket
       - run: go version
       - run: go mod download
-      - run: curl http://localhost:4443/storage/v1/b
+      - run: curl http://localhost:${{ job.services.gcs-mock.ports[4443] }}/storage/v1/b
       - run: make test
