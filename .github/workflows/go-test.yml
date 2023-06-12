@@ -1,0 +1,41 @@
+name: Go Test
+
+run-name: ${{ github.actor }} is testing go test 🚀
+
+env:
+  MY_BUCKET: my_bucket
+  GCS_MOCK_PORT: 4443
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches: [main]
+
+jobs:
+  put-gcs-facker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "^1.20"
+
+      - name: "init gcs mock server"
+        run: mkdir -p ./tmp/gcs-data/my_bucket
+      - uses: fsouza/fake-gcs-action@v0.4.1
+        with:
+          version: "1.45"
+          data: tmp/gcs-data
+          backend: memory
+          scheme: http
+          public-host: localhost:${{ env.GCS_MOCK_PORT }}
+          port: ${{ env.GCS_MOCK_PORT }}
+      - run: curl http://localhost:${{ env.GCS_MOCK_PORT }}/storage/v1/b
+
+      - run: go version
+      - run: go mod download
+      - run: make test
+        env:
+          GCS_URL: http://localhost:${{ env.GCS_MOCK_PORT }}
