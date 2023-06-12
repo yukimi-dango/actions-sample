@@ -16,35 +16,26 @@ jobs:
   put-gcs-facker:
     runs-on: ubuntu-latest
 
-    services:
-      gcs:
-        image: fsouza/fake-gcs-server
-        ports:
-          - 4443
-        #options: --entrypoint='"/bin/fake-gcs-server", "-data", "/data", "-scheme", "http"'
-        options: --entrypoint="\"/bin/fake-gcs-server\", \"-data\", \"/data\", \"-scheme\", \"http\""
-        #command: -public-host "localhost:4443"
-
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version: "^1.20"
 
-      # # gcs-mock-server setup
-      # - run: mkdir -p ./tmp/my_bucket
-      # - uses: fsouza/fake-gcs-action@v0.4.1
-      #   with:
-      #     version: "1.37.2"
-      #     data: tmp
-      #     backend: memory
-      #     scheme: http
-      #     public-host: localhost:${{ env.GCS_MOCK_PORT }}
-      #     port: ${{ env.GCS_MOCK_PORT }}
-      #- run: curl http://localhost:${{ env.GCS_MOCK_PORT }}/storage/v1/b
+      - name: "init gcs mock server"
+        run: mkdir -p ./tmp/gcs-data/my_bucket
+      - uses: fsouza/fake-gcs-action@v0.4.1
+        with:
+          version: "1.45"
+          data: tmp/gcs-data
+          backend: memory
+          scheme: http
+          public-host: localhost:${{ env.GCS_MOCK_PORT }}
+          port: ${{ env.GCS_MOCK_PORT }}
+      - run: curl http://localhost:${{ env.GCS_MOCK_PORT }}/storage/v1/b
+
       - run: go version
       - run: go mod download
       - run: make test
         env:
-          #GCS_URL: http://localhost:${{ env.GCS_MOCK_PORT }}
-          GCS_URL: http://localhost:${{ job.services.gcs.ports[4443] }}
+          GCS_URL: http://localhost:${{ env.GCS_MOCK_PORT }}
